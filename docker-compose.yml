@@ -1,12 +1,11 @@
-
 version: '3.9'
 
 x-kong-config: &kong-env
-  KONG_DATABASE: ${KONG_DATABASE:-off}
-  KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
+  KONG_DATABASE: postgres
+  KONG_PG_DATABASE: kong
   KONG_PG_HOST: db
-  KONG_PG_USER: ${KONG_PG_USER:-kong}
-  KONG_PG_PASSWORD_FILE: /run/secrets/kong_postgres_password
+  KONG_PG_USER: kong
+  KONG_PG_PASSWORD: kong
 
 volumes:
   kong_data: {}
@@ -25,37 +24,19 @@ networks:
 
 services:
   kong-migrations:
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    image: "kong:latest"
     command: kong migrations bootstrap
-    profiles: ["database"]
     depends_on:
       - db
     environment:
       <<: *kong-env
-    secrets:
-      - kong_postgres_password
-    networks:
-      - intranet
-    restart: on-failure
-
-  kong-migrations-up:
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
-    command: kong migrations up && kong migrations finish
-    profiles: ["database"]
-    depends_on:
-      - db
-    environment:
-      <<: *kong-env
-    secrets:
-      - kong_postgres_password
     networks:
       - intranet
     restart: on-failure
 
   kong:
     platform: linux/arm64
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
-    user: "${KONG_USER:-kong}"
+    image: "kong:latest"
     environment:
       <<: *kong-env
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
@@ -66,8 +47,6 @@ services:
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_PREFIX: ${KONG_PREFIX:-/var/run/kong}
       KONG_DECLARATIVE_CONFIG: "/opt/kong/kong.yaml"
-    secrets:
-      - kong_postgres_password
     networks:
       - intranet
     ports:
@@ -75,11 +54,6 @@ services:
       # according to the CIS Security test.
       - "${KONG_INBOUND_PROXY_LISTEN:-0.0.0.0}:8000:8000/tcp"
       - "${KONG_INBOUND_SSL_PROXY_LISTEN:-0.0.0.0}:8443:8443/tcp"
-      # Making them mandatory but undefined, like so would be backwards-breaking:
-      # - "${KONG_INBOUND_PROXY_LISTEN?Missing inbound proxy host}:8000:8000/tcp"
-      # - "${KONG_INBOUND_SSL_PROXY_LISTEN?Missing inbound proxy ssl host}:8443:8443/tcp"
-      # Alternative is deactivating check 5.13 in the security bench, if we consider Kong's own config to be enough security here
-
       - "127.0.0.1:8001:8001/tcp"
       - "127.0.0.1:8444:8444/tcp"
     healthcheck:
@@ -97,26 +71,19 @@ services:
       - no-new-privileges
 
   db:
-    image: postgres:9.5
-    profiles: ["database"]
+    image: postgres:9.6
     environment:
-      POSTGRES_DB: ${KONG_PG_DATABASE:-kong}
-      POSTGRES_USER: ${KONG_PG_USER:-kong}
-      POSTGRES_PASSWORD_FILE: /run/secrets/kong_postgres_password
-    secrets:
-      - kong_postgres_password
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: kong
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER:-kong}"]
+      test: ["CMD", "pg_isready", "-U", "kong"]
       interval: 30s
       timeout: 30s
       retries: 3
     restart: on-failure
-    stdin_open: true
-    tty: true
     networks:
       - intranet
-    volumes:
-      - kong_data:/var/lib/postgresql/data
 
   hello:
     build:

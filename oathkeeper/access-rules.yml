@@ -4,7 +4,7 @@
     preserve_host: true
     url: "http://hello:8090"
   match:
-    url: "http://127.0.0.1:8080/greet"
+    url: "http://oathkeeper:4455/greet"
     methods:
       - GET
   authenticators:
