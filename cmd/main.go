@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -17,6 +18,6 @@ func helloJSON(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	http.HandleFunc("/greet", helloJSON)
-	http.ListenAndServe(":8090", nil)
+	log.Fatal(http.ListenAndServe(":8090", nil))
 
 }
