@@ -46,3 +46,10 @@ Oathkeeper checks the incoming request for presense of `ory_kratos_session` and 
 
 1. Proxies request to Go HTTP API if the identity check passes in Ory Kratos
 2. Redirects user to the Kratos UI if the identity check fails
+
+## Local demo
+
+```
+docker-compose up --build
+```
+Open http://127.0.0.1:8000/greet in your browser and follow the login flow
