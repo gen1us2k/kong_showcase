@@ -8,11 +8,11 @@ This is a demo app build to show a configuration using these products to build y
 2. Oathkeeper as Zero Trust Identity Access Proxy
 3. Kong as an ingress for incoming HTTP traffic
 
-## Configure local environemtn
-### Prepequisites
+## Configure local environment
+### Prerequisites
 
 1. Go 1.1x
-2. Docker 
+2. Docker
 3. make
 
 ### Using docker-compose
@@ -52,4 +52,4 @@ Oathkeeper checks the incoming request for presense of `ory_kratos_session` and 
 ```
 docker-compose up --build
 ```
-Open http://127.0.0.1:8000/greet in your browser and follow the login flow
+Open http://127.0.0.1:8000/hello in your browser and follow the login flow
