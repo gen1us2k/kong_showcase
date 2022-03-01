@@ -87,7 +87,13 @@ services:
 
   hello:
     build:
-      context: .
+      context: hello
+    networks:
+      - intranet
+
+  world:
+    build:
+      context: world
     networks:
       - intranet
 
@@ -168,7 +174,3 @@ services:
       - '4437:4437'
     networks:
       - intranet
-
-secrets:
-  kong_postgres_password:
-    file: ./POSTGRES_PASSWORD

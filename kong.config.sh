@@ -6,9 +6,8 @@ curl -i -X POST \
 
 curl -i -X POST \
   --url http://localhost:8001/services/secure-api/routes \
-  --data 'paths[]=/greet'\
-  --data 'name=greet'
-
+  --data 'paths[]=/'\
+  --data 'name=hello'
 
 curl -i -X GET \
   --url http://localhost:8000/ \
