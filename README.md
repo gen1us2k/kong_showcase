@@ -2,6 +2,8 @@
 
 This is a demo app build to show a configuration using these products to build your next app
 
+## Project moved [here](https://github.com/ory/examples/tree/master/kratos-oathkeeper-kong)
+
 ## Architecture
 
 1. A simple Go HTTP API that exposes `/greet` endpoint and listens `:8090` port
